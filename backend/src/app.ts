@@ -8,6 +8,7 @@ import { DataRequester } from './services/dataRequester';
 import { DataParser } from './services/dataParser';
 import { PointsCalculator } from './services/pointsCalculator';
 import { CarData } from './models/CarData';
+import apiRoutes from './routes/api';
 
 dotenv.config();
 
@@ -162,6 +163,8 @@ app.get('/api/test-cardata', async (req, res) => {
     }
 });
 
+app.use('/api', apiRoutes);
+
 // Start server
 app.listen(PORT, () => {
     console.log(`Baja Tracker API server running on port ${PORT}`);
@@ -169,6 +172,8 @@ app.listen(PORT, () => {
     console.log(`Test parsing: http://localhost:${PORT}/api/test-parse`);
     console.log(`Test scoring: http://localhost:${PORT}/api/test-scoring`);
     console.log(`Test CarData: http://localhost:${PORT}/api/test-cardata`);
+    console.log(`Refresh data: POST http://localhost:${PORT}/api/refresh`);
+
 });
 
 export default app;
