@@ -1,11 +1,12 @@
-import { ICarData, RankingEntry, Rankings } from '../types';
+import { RankingEntry, Rankings } from '../types';
+import { CarData } from '../models/CarData';
 import { EVENT_POINTS, TIME_CAP_MULTIPLIERS } from '../config';
 
 
 export class PointsCalculator {
-    private carDatas: Map<number, ICarData>;
+    private carDatas: Map<number, CarData>;
 
-    constructor(carDatas: Map<number, ICarData>) {
+    constructor(carDatas: Map<number, CarData>) {
         this.carDatas = carDatas;
     }
 
@@ -61,7 +62,6 @@ export class PointsCalculator {
             }
         }
     }
-
 
     calculateManeuverabilityPoints(): void {
         console.log('Calculating maneuverability points...');
@@ -119,8 +119,8 @@ export class PointsCalculator {
     calculateTractionPoints(): void {
         console.log('Calculating traction points...');
 
-        // Get all cars with valid times
-        const finishers: ICarData[] = [];
+        // Get all cars with valid times (finishers)
+        const finishers: CarData[] = [];
         const allTimes: number[] = [];
 
         for (const car of this.carDatas.values()) {
@@ -178,7 +178,7 @@ export class PointsCalculator {
         console.log('Calculating suspension points...');
 
         // Get all cars with valid times (finishers)
-        const finishers: ICarData[] = [];
+        const finishers: CarData[] = [];
         const allTimes: number[] = [];
 
         for (const car of this.carDatas.values()) {
@@ -253,7 +253,6 @@ export class PointsCalculator {
         }
     }
 
-
     calculateAllPoints(): void {
         console.log('Calculating points for all events...');
         this.calculateAccelerationPoints();
@@ -264,27 +263,19 @@ export class PointsCalculator {
     }
 
 
-    private getDynamicScore(car: ICarData): number {
-        return (car.acceleration_score || 0) +
-            (car.traction_score || 0) +
-            (car.maneuverability_score || 0) +
-            (car.suspension_score || 0);
+    private getDynamicScore(car: CarData): number {
+        return car.getDynamicScore();
     }
 
 
-    private getStaticScore(car: ICarData): number {
-        return (car.design_result?.score || 0) +
-            (car.cost_result?.score || 0) +
-            (car.business_result?.score || 0);
+    private getStaticScore(car: CarData): number {
+        return car.getStaticScore();
     }
 
 
-    private getTotalScore(car: ICarData): number {
-        return this.getDynamicScore(car) +
-            this.getStaticScore(car) +
-            (car.endurance_score || 0);
+    private getTotalScore(car: CarData): number {
+        return car.getTotalScore();
     }
-
 
     getRankings(): Rankings {
         const cars = Array.from(this.carDatas.values());

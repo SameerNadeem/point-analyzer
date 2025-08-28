@@ -7,6 +7,7 @@ import { PORT, EVENT_POINTS, EVENT_URLS } from './config';
 import { DataRequester } from './services/dataRequester';
 import { DataParser } from './services/dataParser';
 import { PointsCalculator } from './services/pointsCalculator';
+import { CarData } from './models/CarData';
 
 dotenv.config();
 
@@ -101,7 +102,7 @@ app.get('/api/test-scoring', async (req, res) => {
             message: 'Scoring test completed!',
             totalCars: parser.getCarDatas().size,
             rankings: {
-                overall: rankings.overall.slice(0, 5),
+                overall: rankings.overall.slice(0, 5), // Top 5 only
                 dynamic: rankings.dynamic.slice(0, 5),
                 static: rankings.static.slice(0, 5),
                 endurance: rankings.endurance.slice(0, 5)
@@ -117,11 +118,57 @@ app.get('/api/test-scoring', async (req, res) => {
     }
 });
 
+app.get('/api/test-cardata', async (req, res) => {
+    try {
+        const requester = new DataRequester();
+        const parser = new DataParser();
+
+        console.log('Testing CarData class methods...');
+        const eventData = await requester.fetchAllEventData();
+        parser.parseAllData(eventData);
+
+        const carDatas = parser.getCarDatas();
+        const sampleCar = Array.from(carDatas.values())[0];
+
+        if (sampleCar) {
+            const calculator = new PointsCalculator(carDatas);
+            calculator.calculateAllPoints();
+
+            res.json({
+                success: true,
+                message: 'CarData class test completed!',
+                sampleCar: {
+                    carNumber: sampleCar.car_number,
+                    teamName: sampleCar.team_name,
+                    dynamicScore: sampleCar.getDynamicScore(),
+                    staticScore: sampleCar.getStaticScore(),
+                    totalScore: sampleCar.getTotalScore(),
+                    toString: sampleCar.toString()
+                }
+            });
+        } else {
+            res.json({
+                success: false,
+                message: 'No car data found'
+            });
+        }
+    } catch (error) {
+        console.error('CarData test error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'CarData test failed',
+            error: error instanceof Error ? error.message : 'Unknown error'
+        });
+    }
+});
+
 // Start server
 app.listen(PORT, () => {
     console.log(`Baja Tracker API server running on port ${PORT}`);
     console.log(`Health check: http://localhost:${PORT}/health`);
     console.log(`Test parsing: http://localhost:${PORT}/api/test-parse`);
+    console.log(`Test scoring: http://localhost:${PORT}/api/test-scoring`);
+    console.log(`Test CarData: http://localhost:${PORT}/api/test-cardata`);
 });
 
 export default app;

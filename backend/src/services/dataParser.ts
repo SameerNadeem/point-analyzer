@@ -1,33 +1,14 @@
 import { load } from 'cheerio';
-import { ICarData, EventData } from '../types';
+import { EventData } from '../types';
+import { CarData } from '../models/CarData';
 
 
 export class DataParser {
-    private carDatas: Map<number, ICarData> = new Map();
+    private carDatas: Map<number, CarData> = new Map();
 
-    private getCarData(carNumber: number): ICarData {
+    private getCarData(carNumber: number): CarData {
         if (!this.carDatas.has(carNumber)) {
-            this.carDatas.set(carNumber, {
-                car_number: carNumber,
-                team_name: null,
-                acceleration_result_1: null,
-                acceleration_result_2: null,
-                acceleration_score: null,
-                traction_result_1: null,
-                traction_result_2: null,
-                traction_score: null,
-                maneuverability_result_1: null,
-                maneuverability_result_2: null,
-                maneuverability_score: null,
-                suspension_result_1: null,
-                suspension_result_2: null,
-                suspension_score: null,
-                design_result: null,
-                cost_result: null,
-                business_result: null,
-                endurance_laps: null,
-                endurance_score: null
-            });
+            this.carDatas.set(carNumber, new CarData(carNumber));
         }
         return this.carDatas.get(carNumber)!;
     }
@@ -37,7 +18,6 @@ export class DataParser {
 
         const $ = load(htmlData);
 
-        // Find results table
         const tableIds = ["MainContent_GridViewDynamicResults", "MainContent_GridViewStaticResults", "MainContent_GridViewEnduranceResults"];
 
         let resultsTable = null;
@@ -94,12 +74,7 @@ export class DataParser {
                 const status = $(cells[3]).text().trim();
 
                 if (!isNaN(carNumber) && !isNaN(time)) {
-                    const car = this.getCarData(carNumber);
-                    if (!car.acceleration_result_1) {
-                        car.acceleration_result_1 = { time, unique_attribute: null, status };
-                    } else {
-                        car.acceleration_result_2 = { time, unique_attribute: null, status };
-                    }
+                    this.getCarData(carNumber).addAccelerationResult(time, status);
                 }
             } catch (error) {
                 console.error('Error parsing acceleration:', error);
@@ -122,12 +97,7 @@ export class DataParser {
                 const status = $(cells[3]).text().trim();
 
                 if (!isNaN(carNumber)) {
-                    const car = this.getCarData(carNumber);
-                    if (!car.traction_result_1) {
-                        car.traction_result_1 = { time, unique_attribute: distance, status };
-                    } else {
-                        car.traction_result_2 = { time, unique_attribute: distance, status };
-                    }
+                    this.getCarData(carNumber).addTractionResult(time, distance, status);
                 }
             } catch (error) {
                 console.error('Error parsing traction:', error);
@@ -150,12 +120,7 @@ export class DataParser {
                 const status = $(cells[3]).text().trim();
 
                 if (!isNaN(carNumber)) {
-                    const car = this.getCarData(carNumber);
-                    if (!car.maneuverability_result_1) {
-                        car.maneuverability_result_1 = { time, unique_attribute: conesHit, status };
-                    } else {
-                        car.maneuverability_result_2 = { time, unique_attribute: conesHit, status };
-                    }
+                    this.getCarData(carNumber).addManeuverabilityResult(time, conesHit, status);
                 }
             } catch (error) {
                 console.error('Error parsing maneuverability:', error);
@@ -178,12 +143,7 @@ export class DataParser {
                 const status = $(cells[3]).text().trim();
 
                 if (!isNaN(carNumber)) {
-                    const car = this.getCarData(carNumber);
-                    if (!car.suspension_result_1) {
-                        car.suspension_result_1 = { time, unique_attribute: gatesHit, status };
-                    } else {
-                        car.suspension_result_2 = { time, unique_attribute: gatesHit, status };
-                    }
+                    this.getCarData(carNumber).addSuspensionResult(time, gatesHit, status);
                 }
             } catch (error) {
                 console.error('Error parsing suspension:', error);
@@ -292,7 +252,7 @@ export class DataParser {
         if (eventData.endurance) this.parseEnduranceData(eventData.endurance);
     }
 
-    getCarDatas(): Map<number, ICarData> {
+    getCarDatas(): Map<number, CarData> {
         return this.carDatas;
     }
 }
