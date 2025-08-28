@@ -5,6 +5,7 @@ import morgan from 'morgan';
 import dotenv from 'dotenv';
 import { PORT, EVENT_POINTS, EVENT_URLS } from './config';
 import { DataRequester } from './services/dataRequester';
+import { DataParser } from './services/dataParser';
 
 dotenv.config();
 
@@ -45,10 +46,47 @@ app.get('/api/test-fetch', async (req, res) => {
     });
 });
 
+app.get('/api/test-parse', async (req, res) => {
+    try {
+        const requester = new DataRequester();
+        const parser = new DataParser();
+
+        console.log('Fetching and parsing data...');
+        const eventData = await requester.fetchAllEventData();
+        parser.parseAllData(eventData);
+
+        const carDatas = parser.getCarDatas();
+        const carCount = carDatas.size;
+        const sampleCar = Array.from(carDatas.values())[0];
+
+        res.json({
+            success: true,
+            message: 'Data parsing test completed!',
+            totalCars: carCount,
+            sampleCar: sampleCar ? {
+                carNumber: sampleCar.car_number,
+                teamName: sampleCar.team_name,
+                hasAccelerationData: !!sampleCar.acceleration_result_1,
+                hasDesignData: !!sampleCar.design_result,
+                hasTractionData: !!sampleCar.traction_result_1,
+                hasEnduranceData: !!sampleCar.endurance_laps
+            } : null
+        });
+    } catch (error) {
+        console.error('Parsing test error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Parsing test failed',
+            error: error instanceof Error ? error.message : 'Unknown error'
+        });
+    }
+});
+
 // Start server
 app.listen(PORT, () => {
     console.log(`Baja Tracker API server running on port ${PORT}`);
     console.log(`Health check: http://localhost:${PORT}/health`);
+    console.log(`Test parsing: http://localhost:${PORT}/api/test-parse`);
 });
 
 export default app;
