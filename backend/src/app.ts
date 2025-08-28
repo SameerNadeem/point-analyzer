@@ -6,6 +6,7 @@ import dotenv from 'dotenv';
 import { PORT, EVENT_POINTS, EVENT_URLS } from './config';
 import { DataRequester } from './services/dataRequester';
 import { DataParser } from './services/dataParser';
+import { PointsCalculator } from './services/pointsCalculator';
 
 dotenv.config();
 
@@ -77,6 +78,40 @@ app.get('/api/test-parse', async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Parsing test failed',
+            error: error instanceof Error ? error.message : 'Unknown error'
+        });
+    }
+});
+
+app.get('/api/test-scoring', async (req, res) => {
+    try {
+        const requester = new DataRequester();
+        const parser = new DataParser();
+
+        console.log('Fetching, parsing, and calculating scores...');
+        const eventData = await requester.fetchAllEventData();
+        parser.parseAllData(eventData);
+
+        const calculator = new PointsCalculator(parser.getCarDatas());
+        calculator.calculateAllPoints();
+        const rankings = calculator.getRankings();
+
+        res.json({
+            success: true,
+            message: 'Scoring test completed!',
+            totalCars: parser.getCarDatas().size,
+            rankings: {
+                overall: rankings.overall.slice(0, 5),
+                dynamic: rankings.dynamic.slice(0, 5),
+                static: rankings.static.slice(0, 5),
+                endurance: rankings.endurance.slice(0, 5)
+            }
+        });
+    } catch (error) {
+        console.error('Scoring test error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Scoring test failed',
             error: error instanceof Error ? error.message : 'Unknown error'
         });
     }
