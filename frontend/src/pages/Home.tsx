@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchRankings } from '../services/api';
 import { Rankings, EventCategory } from '../types';
+import OverallChart from '../components/OverallChart';
 
 const Home: React.FC = () => {
     const [rankings, setRankings] = useState<Rankings | null>(null);
@@ -85,6 +86,11 @@ const Home: React.FC = () => {
                                 the tabs below. Click on a car number to see detailed results for that car.
                             </p>
                         </div>
+
+                        {/* Chart Container */}
+                        {rankings && rankings.overall.length > 0 && (
+                            <OverallChart data={rankings.overall} />
+                        )}
 
                         {/* Search Box */}
                         <div className="mb-3">

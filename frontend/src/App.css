@@ -67,39 +67,7 @@
   box-shadow: 0 0 0 0.2rem rgba(21, 71, 52, 0.25);
 }
 
-/* Chart styling */
-.recharts-wrapper {
-  font-family: inherit;
-}
-
-.recharts-tooltip-wrapper {
-  z-index: 1000;
-}
-
-.recharts-cartesian-grid-horizontal line,
-.recharts-cartesian-grid-vertical line {
-  stroke: #f0f0f0;
-}
-
-.recharts-bar:hover {
-  opacity: 1 !important;
-}
-
-/* Podium styling */
-.podium-block {
-  transition: transform 0.3s ease;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.podium-block:hover {
-  transform: translateY(-5px);
-}
-
-.podium-content {
-  text-align: center;
-}
-
-/* Card hover effects */
+/* Card hover effects for top 10 teams */
 .card {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
@@ -109,9 +77,13 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
 }
 
-/* View toggle buttons */
-.btn-group .btn {
-  font-size: 0.875rem;
+/* Winner card special styling */
+.border-warning.border-2 {
+  box-shadow: 0 2px 8px rgba(255, 193, 7, 0.3) !important;
+}
+
+.border-warning.border-2:hover {
+  box-shadow: 0 4px 16px rgba(255, 193, 7, 0.4) !important;
 }
 
 /* Summary cards */
