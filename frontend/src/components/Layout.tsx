@@ -9,6 +9,7 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
+    const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
     useEffect(() => {
         setLastUpdate(new Date());
@@ -19,14 +20,27 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         try {
             await refreshData();
             setLastUpdate(new Date());
-            // Reload the page to get fresh data
-            window.location.reload();
+            setShowSuccessMessage(true);
+
+            setTimeout(() => setShowSuccessMessage(false), 3000);
+
+            setTimeout(() => window.location.reload(), 1000);
+
         } catch (error) {
             console.error('Refresh failed:', error);
             alert('Failed to refresh data. Please try again.');
         } finally {
             setIsRefreshing(false);
         }
+    };
+
+    const handleExport = (format: 'csv' | 'json') => {
+        const link = document.createElement('a');
+        link.href = `/api/export/${format}`;
+        link.download = `baja_results.${format}`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     };
 
     return (
@@ -53,24 +67,30 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                                 <Link className="nav-link" to="/">Home</Link>
                             </li>
                             <li className="nav-item dropdown">
-                                <a
-                                    className="nav-link dropdown-toggle"
-                                    href="#"
-                                    role="button"
+                                <button
+                                    className="nav-link dropdown-toggle btn btn-link p-0 border-0"
+                                    type="button"
                                     data-bs-toggle="dropdown"
+                                    style={{ color: 'rgba(255,255,255,.55)' }}
                                 >
                                     Export
-                                </a>
+                                </button>
                                 <ul className="dropdown-menu">
                                     <li>
-                                        <a className="dropdown-item" href="/api/export/csv">
-                                            CSV
-                                        </a>
+                                        <button
+                                            className="dropdown-item"
+                                            onClick={() => handleExport('csv')}
+                                        >
+                                            Export CSV
+                                        </button>
                                     </li>
                                     <li>
-                                        <a className="dropdown-item" href="/api/export/json">
-                                            JSON
-                                        </a>
+                                        <button
+                                            className="dropdown-item"
+                                            onClick={() => handleExport('json')}
+                                        >
+                                            Export JSON
+                                        </button>
                                     </li>
                                 </ul>
                             </li>
@@ -99,6 +119,18 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
             {/* Main Content */}
             <div className="container my-4 flex-grow-1">
+
+                {showSuccessMessage && (
+                    <div className="alert alert-success alert-dismissible fade show" role="alert">
+                        <strong>Success!</strong> Competition data has been refreshed successfully.
+                        <button
+                            type="button"
+                            className="btn-close"
+                            onClick={() => setShowSuccessMessage(false)}
+                        ></button>
+                    </div>
+                )}
+
                 {children}
             </div>
 

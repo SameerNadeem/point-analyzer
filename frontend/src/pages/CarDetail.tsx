@@ -54,7 +54,7 @@ const CarDetail: React.FC = () => {
         }
     };
 
-    const formatResult = (result: any, showAttribute?: string) => {
+    const formatResult = (result: any, showAttribute?: 'distance' | 'cones' | 'gates') => {
         if (!result) return 'No Data';
 
         return (
@@ -69,6 +69,16 @@ const CarDetail: React.FC = () => {
                 )}
             </div>
         );
+    };
+
+    // Handle export
+    const handleExport = (format: 'csv' | 'json') => {
+        const link = document.createElement('a');
+        link.href = `/api/export/${format}`;
+        link.download = `baja_results.${format}`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     };
 
     if (loading) {
@@ -358,10 +368,25 @@ const CarDetail: React.FC = () => {
                         </div>
 
                         {/* Navigation */}
-                        <div className="mt-4">
-                            <Link to="/" className="btn btn-secondary me-2">
+                        <div className="mt-4 d-flex justify-content-between">
+                            <Link to="/" className="btn btn-secondary">
                                 <i className="bi bi-arrow-left"></i> Back to Rankings
                             </Link>
+
+                            <div className="btn-group">
+                                <button
+                                    className="btn btn-outline-success btn-sm"
+                                    onClick={() => handleExport('csv')}
+                                >
+                                    Export CSV
+                                </button>
+                                <button
+                                    className="btn btn-outline-primary btn-sm"
+                                    onClick={() => handleExport('json')}
+                                >
+                                    Export JSON
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

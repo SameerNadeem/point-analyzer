@@ -30,7 +30,7 @@ const Home: React.FC = () => {
         loadRankings();
     }, []);
 
-    // Filter rankings based on search term
+
     const filterRankings = (rankingList: any[]) => {
         if (!searchTerm) return rankingList;
 
@@ -40,10 +40,20 @@ const Home: React.FC = () => {
         );
     };
 
-    // Get current tab data
+
     const getCurrentTabData = () => {
         if (!rankings) return [];
         return filterRankings(rankings[activeTab]);
+    };
+
+
+    const handleExport = (format: 'csv' | 'json') => {
+        const link = document.createElement('a');
+        link.href = `/api/export/${format}`;
+        link.download = `baja_results.${format}`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     };
 
     if (loading) {
@@ -92,7 +102,7 @@ const Home: React.FC = () => {
                             <OverallChart data={rankings.overall} />
                         )}
 
-                        {/* Search Box */}
+                        {/* Search Box and Export Controls */}
                         <div className="mb-3">
                             <div className="row">
                                 <div className="col-md-6">
@@ -103,6 +113,22 @@ const Home: React.FC = () => {
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
                                     />
+                                </div>
+                                <div className="col-md-6 text-md-end">
+                                    <div className="btn-group">
+                                        <button
+                                            className="btn btn-outline-success btn-sm"
+                                            onClick={() => handleExport('csv')}
+                                        >
+                                            Export CSV
+                                        </button>
+                                        <button
+                                            className="btn btn-outline-primary btn-sm"
+                                            onClick={() => handleExport('json')}
+                                        >
+                                            Export JSON
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
