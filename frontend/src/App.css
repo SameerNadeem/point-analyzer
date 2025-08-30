@@ -12,6 +12,7 @@
   border-color: #1a5c42;
 }
 
+/* Card styling */
 .card {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
@@ -23,6 +24,7 @@
   font-weight: 600;
 }
 
+/* Table styling (for rankings table) */
 .table th {
   background-color: #f8f9fa;
   font-weight: 600;
@@ -32,11 +34,41 @@
   background-color: rgba(21, 71, 52, 0.1);
 }
 
+/* Tab styling */
+.nav-tabs .nav-link {
+  font-weight: 500;
+  color: #154734;
+}
+
+.nav-tabs .nav-link.active {
+  font-weight: 600;
+  color: #154734;
+  border-color: #154734 #154734 #fff;
+}
+
+/* Search box styling */
+.form-control:focus {
+  border-color: #154734;
+  box-shadow: 0 0 0 0.2rem rgba(21, 71, 52, 0.25);
+}
+
+/* Summary cards */
+.card.bg-light {
+  background-color: #f8f9fa !important;
+  border: 1px solid #e9ecef;
+}
+
+.text-primary {
+  color: #154734 !important;
+}
+
+
 .alert-info {
   background-color: #e3f2fd;
   border-color: #b3d7ff;
   color: #0c5460;
 }
+
 
 @media (max-width: 768px) {
   .card-title {
@@ -49,6 +81,7 @@
   }
 }
 
+/* Spinner for refresh button */
 .spinner-border-sm {
   width: 1rem;
   height: 1rem;

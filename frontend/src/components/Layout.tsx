@@ -1,19 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { refreshData } from '../services/api';
 
 interface LayoutProps {
     children: React.ReactNode;
-    lastUpdate?: Date | null;
 }
 
-const Layout: React.FC<LayoutProps> = ({ children, lastUpdate }) => {
+const Layout: React.FC<LayoutProps> = ({ children }) => {
     const [isRefreshing, setIsRefreshing] = useState(false);
+    const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
+
+    useEffect(() => {
+        setLastUpdate(new Date());
+    }, []);
 
     const handleRefresh = async () => {
         setIsRefreshing(true);
         try {
             await refreshData();
+            setLastUpdate(new Date());
             // Reload the page to get fresh data
             window.location.reload();
         } catch (error) {
@@ -26,6 +31,7 @@ const Layout: React.FC<LayoutProps> = ({ children, lastUpdate }) => {
 
     return (
         <div className="min-vh-100 d-flex flex-column">
+            {/* Navigation Bar */}
             <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
                 <div className="container">
                     <Link className="navbar-brand" to="/">
@@ -96,6 +102,7 @@ const Layout: React.FC<LayoutProps> = ({ children, lastUpdate }) => {
                 {children}
             </div>
 
+            {/* Footer */}
             <footer className="bg-dark text-light py-3 mt-5">
                 <div className="container">
                     <div className="row">

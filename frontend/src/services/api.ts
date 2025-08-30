@@ -1,13 +1,11 @@
 import axios from 'axios';
 import { Rankings, CarData, ApiResponse, EventCategory } from '../types';
 
-
 const api = axios.create({
     baseURL: '/api', // will forward to backend
     timeout: 30000,
 });
 
-// Add response interceptor for error handling
 api.interceptors.response.use(
     (response) => response,
     (error) => {
@@ -27,9 +25,15 @@ export const fetchRankings = async (category?: EventCategory): Promise<Rankings>
         } else {
             throw new Error(response.data.message || 'Failed to fetch rankings');
         }
-    } catch (error) {
+    } catch (error: any) {
+        if (error.response?.status === 500) {
+            throw new Error('Server error - please try refreshing the data');
+        } else if (error.code === 'ECONNABORTED') {
+            throw new Error('Request timeout - please check your connection');
+        }
+
         console.error('Error fetching rankings:', error);
-        throw error;
+        throw new Error(error.response?.data?.message || error.message || 'Failed to fetch rankings');
     }
 };
 
