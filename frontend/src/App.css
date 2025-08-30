@@ -12,7 +12,7 @@
   border-color: #1a5c42;
 }
 
-/* Card styling */
+/* Card styling to match original */
 .card {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
@@ -34,6 +34,21 @@
   background-color: rgba(21, 71, 52, 0.1);
 }
 
+/* Navigation dropdown button styling */
+.navbar-nav .dropdown .btn-link {
+  color: rgba(255, 255, 255, .55) !important;
+  text-decoration: none;
+  font-weight: 400;
+}
+
+.navbar-nav .dropdown .btn-link:hover {
+  color: rgba(255, 255, 255, .75) !important;
+}
+
+.navbar-nav .dropdown .btn-link:focus {
+  box-shadow: none;
+}
+
 /* Tab styling */
 .nav-tabs .nav-link {
   font-weight: 500;
@@ -52,6 +67,53 @@
   box-shadow: 0 0 0 0.2rem rgba(21, 71, 52, 0.25);
 }
 
+/* Chart styling */
+.recharts-wrapper {
+  font-family: inherit;
+}
+
+.recharts-tooltip-wrapper {
+  z-index: 1000;
+}
+
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line {
+  stroke: #f0f0f0;
+}
+
+.recharts-bar:hover {
+  opacity: 1 !important;
+}
+
+/* Podium styling */
+.podium-block {
+  transition: transform 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.podium-block:hover {
+  transform: translateY(-5px);
+}
+
+.podium-content {
+  text-align: center;
+}
+
+/* Card hover effects */
+.card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* View toggle buttons */
+.btn-group .btn {
+  font-size: 0.875rem;
+}
+
 /* Summary cards */
 .card.bg-light {
   background-color: #f8f9fa !important;
@@ -62,14 +124,14 @@
   color: #154734 !important;
 }
 
-
+/* Alert styling to match original */
 .alert-info {
   background-color: #e3f2fd;
   border-color: #b3d7ff;
   color: #0c5460;
 }
 
-
+/* Responsive adjustments */
 @media (max-width: 768px) {
   .card-title {
     font-size: 1.2rem;
